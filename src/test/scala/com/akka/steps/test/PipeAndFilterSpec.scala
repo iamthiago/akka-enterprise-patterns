@@ -17,8 +17,8 @@ class PipeAndFilterSpec extends TestKit(ActorSystem("MyTestSystem")) with Implic
 
   def fixture = new {
     val address = Address(
-      state = "SP",
-      city = "Barueri",
+      state = Some("SP"),
+      city = Some("Barueri"),
       neighborhood = Some("Alphaville"),
       street = Some("Alameda Itapecuru"),
       number = Some("515"),
@@ -80,7 +80,7 @@ class PipeAndFilterSpec extends TestKit(ActorSystem("MyTestSystem")) with Implic
       val validationActor = system.actorOf(Props(new ValidationActor(geocodeProbe.ref)))
       val sanitizeActor = system.actorOf(Props(new SanitizeActor(validationActor)))
 
-      sanitizeActor ! fixture.address.copy(state = "")
+      sanitizeActor ! fixture.address.copy(state = None)
       expectMsgType[akka.actor.Status.Failure]
       geocodeProbe.expectNoMsg(500.millis)
     }
@@ -91,7 +91,7 @@ class PipeAndFilterSpec extends TestKit(ActorSystem("MyTestSystem")) with Implic
       val validationActor = system.actorOf(Props(new ValidationActor(geocodeProbe.ref)))
       val sanitizeActor = system.actorOf(Props(new SanitizeActor(validationActor)))
 
-      sanitizeActor ! fixture.address.copy(city = "")
+      sanitizeActor ! fixture.address.copy(city = None)
       expectMsgType[akka.actor.Status.Failure]
       geocodeProbe.expectNoMsg(500.millis)
     }
